@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Fan Controller</title>
+    <link rel="icon" type="image/jpeg" href="/static/poza.jpg">
+    <link rel="apple-touch-icon" href="/static/poza.jpg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#222222">
+
+
+    <style>
+        /* --- STILURI DE BAZĂ (Desktop) --- */
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            background-color: #222; 
+            color: white; 
+            margin-top: 30px;
+            padding: 0;
+        }
+        .card { 
+            background: #333; 
+            padding: 20px; 
+            border-radius: 15px; 
+            display: inline-block; 
+            width: 300px; /* Lățime fixă pe desktop */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            box-sizing: border-box; /* Important pentru padding */
+        }
+        h1 { color: #f1c40f; margin-top: 0; }
+        
+        .value-box { font-size: 30px; font-weight: bold; margin: 10px 0; color: #3498db; }
+        .label { color: #aaa; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Stiluri pentru controale */
+        .control-panel { margin-top: 30px; padding-top: 20px; border-top: 1px solid #555; }
+        
+        input[type=range] { width: 100%; margin: 15px 0; cursor: pointer; }
+        
+        /* Stiluri Switch */
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; vertical-align: middle;}
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #2ecc71; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        
+        .mode-label { font-weight: bold; margin-right: 10px; }
+
+        /* --- STILURI PENTRU TELEFON (Mobil) --- */
+        @media screen and (max-width: 600px) {
+            body {
+                margin-top: 10px;
+                padding: 10px; /* Puțin spațiu pe margini */
+            }
+            .card {
+                width: 100%;       /* Cardul ocupă toată lățimea disponibilă */
+                max-width: 100%;   /* Ne asigurăm că nu depășește ecranul */
+                padding: 25px 15px; /* Butoane mai ușor de apăsat */
+            }
+            .value-box {
+                font-size: 36px;   /* Numere mai mari pentru vizibilitate */
+            }
+            h1 {
+                font-size: 24px;
+            }
+            /* Facem slider-ul mai înalt ca să fie ușor de prins cu degetul */
+            input[type=range] {
+                height: 30px; 
+            }
+            .control-panel {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Raspberry Fan</h1>
+        
+        <div style="margin-bottom: 20px;">
+            <div class="label">Temperatura</div>
+            <div id="temp" class="value-box">--</div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <div class="label">Viteza (RPM)</div>
+            <div id="rpm" class="value-box">--</div>
+        </div>
+        
+        <div>
+            <div class="label">Putere (%)</div>
+            <div id="pwr" class="value-box">-- %</div>
+        </div>
+        
+        <div class="control-panel">
+            <div style="margin-bottom: 25px; display: flex; align-items: center; justify-content: center;">
+                <span class="mode-label">MOD AUTO:</span>
+                <label class="switch">
+                    <input type="checkbox" id="autoToggle" onchange="sendControl()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div id="sliderContainer">
+                <div class="label">Control Manual</div>
+                <input type="range" id="speedSlider" min="0" max="100" value="50" oninput="updateSliderVal(this.value)" onchange="sendControl()">
+                <div style="font-size: 18px; font-weight: bold;">
+                    <span id="sliderVal">50</span>%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateSliderVal(val) {
+            document.getElementById('sliderVal').innerText = val;
+        }
+
+        function sendControl() {
+            const isAuto = document.getElementById('autoToggle').checked;
+            const speed = document.getElementById('speedSlider').value;
+            
+            document.getElementById('sliderContainer').style.opacity = isAuto ? "0.3" : "1";
+            document.getElementById('speedSlider').disabled = isAuto;
+
+            fetch('/api/control', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    auto_mode: isAuto, 
+                    speed: parseInt(speed) 
+                })
+            });
+        }
+
+        function updateData() {
+            fetch('/api/data')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('temp').innerText = data.temp + " °C";
+                    document.getElementById('rpm').innerText = data.rpm;
+                    document.getElementById('pwr').innerText = data.speed_percent + " %";
+                    
+                    const toggle = document.getElementById('autoToggle');
+                    // Actualizăm UI doar dacă nu e focus pe element (ca să nu sară sliderul când tragi de el)
+                    if (document.activeElement.id !== "speedSlider" && document.activeElement.id !== "autoToggle") {
+                         if (toggle.checked !== data.is_auto) {
+                            toggle.checked = data.is_auto;
+                            document.getElementById('sliderContainer').style.opacity = data.is_auto ? "0.3" : "1";
+                            document.getElementById('speedSlider').disabled = data.is_auto;
+                        }
+                        // Actualizăm sliderul doar dacă e manual mode și nu tragem de el
+                        if (!data.is_auto && document.activeElement.id !== "speedSlider") {
+                            document.getElementById('speedSlider').value = data.manual_val * 100;
+                            document.getElementById('sliderVal').innerText = Math.int(data.manual_val * 100);
+                        }
+                    }
+                })
+                .finally(() => {
+                    setTimeout(updateData, 1000);
+                });
+        }
+
+        updateData();
+    </script>
+</body>
+</html>
