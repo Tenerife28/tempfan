@@ -8,14 +8,14 @@
   "description": "O aplicație demonstrativă simplă.",
   "icons": [
     {
-      "src": "staic/icon.png",
+      "src": "static/icon.jpg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "staic/icon.png",
+      "src": "static/icon.jpg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ]
 }

@@ -3,16 +3,16 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Fan Control</title>
-    <link rel="icon" href="static/icon.png" type="image/png">
+    <title>Smart Fan Controller</title>
     
-    <link rel="manifest" href="manifest.json">
-    
-    <meta name="theme-color" content="#4A90E2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#222222">
 
-
+    <link rel="icon" type="image/png" href="/static/icon.jpg">
+    <link rel="apple-touch-icon" href="/static/icon.jpg">
 
     <style>
         /* --- STILURI DE BAZĂ (Desktop) --- */
@@ -23,15 +23,18 @@
             color: white; 
             margin-top: 30px;
             padding: 0;
+            /* Previne selectarea textului accidental pe mobil */
+            -webkit-user-select: none; 
+            user-select: none;
         }
         .card { 
             background: #333; 
             padding: 20px; 
             border-radius: 15px; 
             display: inline-block; 
-            width: 300px; /* Lățime fixă pe desktop */
+            width: 300px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-            box-sizing: border-box; /* Important pentru padding */
+            box-sizing: border-box; 
         }
         h1 { color: #f1c40f; margin-top: 0; }
         
@@ -57,20 +60,19 @@
         @media screen and (max-width: 600px) {
             body {
                 margin-top: 10px;
-                padding: 10px; /* Puțin spațiu pe margini */
+                padding: 10px;
             }
             .card {
-                width: 100%;       /* Cardul ocupă toată lățimea disponibilă */
-                max-width: 100%;   /* Ne asigurăm că nu depășește ecranul */
-                padding: 25px 15px; /* Butoane mai ușor de apăsat */
+                width: 100%;       
+                max-width: 100%;   
+                padding: 25px 15px;
             }
             .value-box {
-                font-size: 36px;   /* Numere mai mari pentru vizibilitate */
+                font-size: 36px;
             }
             h1 {
                 font-size: 24px;
             }
-            /* Facem slider-ul mai înalt ca să fie ușor de prins cu degetul */
             input[type=range] {
                 height: 30px; 
             }
