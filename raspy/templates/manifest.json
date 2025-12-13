@@ -1,0 +1,21 @@
+{
+  "name": "Smart Fan Control",
+  "short_name": "SFC",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4A90E2",
+  "description": "O aplicație demonstrativă simplă.",
+  "icons": [
+    {
+      "src": "staic/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "staic/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
