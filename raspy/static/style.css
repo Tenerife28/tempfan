@@ -1,0 +1,152 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #222;
+    color: white;
+    margin-top: 30px;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.card {
+    background: #333;
+    padding: 20px;
+    border-radius: 15px;
+    display: inline-block;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+}
+
+h1 {
+    color: #f1c40f;
+    margin-top: 0;
+}
+
+.value-box {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #3498db;
+}
+
+.label {
+    color: #aaa;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.control-panel {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #555;
+}
+
+input[type=range] {
+    width: 100%;
+    margin: 15px 0;
+    cursor: pointer;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    vertical-align: middle;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #2ecc71;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+.mode-label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.turbo-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 15px 0;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    margin-top: 25px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.turbo-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 5px rgba(231, 76, 60, 0.4);
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        margin-top: 10px;
+        padding: 10px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 100%;
+        padding: 25px 15px;
+    }
+
+    .value-box {
+        font-size: 36px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    input[type=range] {
+        height: 30px;
+    }
+
+    .control-panel {
+        margin-top: 20px;
+    }
+}
