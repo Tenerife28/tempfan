@@ -2,14 +2,13 @@ from gpiozero import PWMOutputDevice, Button
 from time import sleep, time
 import os
 
-# --- ZONA DE CONFIGURARE (Aici modifici tot) ---
 class Config:
     SENSOR_ID = '28-7975a6086461'
     PIN_PWM = 6
     PIN_TACH = 5
     PIN_BUTTON = 13
     
-    PPR = 4           # Corecție pentru RPM
+    PPR = 4
     WAIT_TIME = 1
     
     MIN_TEMP = 15
@@ -17,10 +16,8 @@ class Config:
     MIN_SPEED = 0.2
     TURBO_DURATION = 30
 
-# --- Clasa Senzor (Fără parametri) ---
 class DS18B20Sensor:
     def __init__(self):
-        # Își ia singur adresa din Config
         base_dir = '/sys/bus/w1/devices/'
         self.sensor_file = os.path.join(base_dir, Config.SENSOR_ID, 'w1_slave')
 
@@ -37,13 +34,8 @@ class DS18B20Sensor:
         except Exception:
             return None
 
-# --- Clasa Ventilator (Fără parametri) ---
-# --- Clasa Ventilator ---
 class SmartFan:
     def __init__(self):
-        self.pwm_device = PWMOutputDevice(Config.PIN_PWM, frequency=100)
-        self.tach_button = Button(Config.PIN_TACH, pull_up=True, bounce_time=None)
-        
         self.ppr = Config.PPR
         self.min_temp = Config.MIN_TEMP
         self.max_temp = Config.MAX_TEMP
@@ -53,20 +45,22 @@ class SmartFan:
         self.turbo_end_time = 0
         self.current_speed_val = 0.0
         
-        # --- MODIFICĂRI NOI ---
-        self.auto_mode = True  # True = Auto (temp), False = Manual (slider)
-        self.manual_speed = 0.5 # Viteza default pentru manual (50%)
-        # ---------------------
+        self.auto_mode = True
+        self.manual_speed = 0.5
 
+        self.pwm_device = PWMOutputDevice(Config.PIN_PWM, frequency=100)
+        
+        self.tach_button = Button(Config.PIN_TACH, pull_up=True, bounce_time=None)
         self.tach_button.when_pressed = self._pulse_callback
 
-    # ... RESTUL METODELOR RĂMÂN NESCHIMBATE ...
-    # (Păstrează _pulse_callback, activate_turbo, set_speed, get_rpm, etc.)
-    
+        self.turbo_physical_button = Button(Config.PIN_BUTTON, pull_up=True, bounce_time=0.1)
+        self.turbo_physical_button.when_pressed = self.activate_turbo
+
     def _pulse_callback(self):
         self._tach_counter += 1
 
     def activate_turbo(self):
+        print(">>> TURBO ACTIVAT! <<<")
         duration = Config.TURBO_DURATION
         self.turbo_end_time = time() + duration
 
@@ -95,17 +89,11 @@ class SmartFan:
     def stop(self):
         self.pwm_device.off()
 
-# --- CLASA CONTROLLER (Fără parametri) ---
 class FanController:
     def __init__(self):
-        # Nu mai primim nimic, instanțiem direct
-        self.fan = SmartFan()       # Se creează singur cu setările din Config
-        self.sensor = DS18B20Sensor() # Se creează singur cu setările din Config
-        
+        self.fan = SmartFan()
+        self.sensor = DS18B20Sensor()
         self.wait_time = Config.WAIT_TIME
-        
-        self.turbo_btn = Button(Config.PIN_BUTTON, pull_up=True, bounce_time=0.1)
-        self.turbo_btn.when_pressed = lambda: self.fan.activate_turbo()
 
     def run(self):
         print("Smart Fan Controller Started.")

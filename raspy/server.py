@@ -73,7 +73,6 @@ def control_fan():
 
     if 'turbo' in data and data['turbo'] is True:
         fan.activate_turbo()
-        print(">>> TURBO ACTIVAT DIN WEB! <<<")
         
     return jsonify({"status": "ok"})
 
