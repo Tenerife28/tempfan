@@ -28,5 +28,5 @@ A robust, web-enabled PWM fan controller for Raspberry Pi. It monitors real-time
 
 2. **Clone the repository:**
    ```bash
-   git clone [https://github.com/Tenerife28/tempfan.git](https://github.com/Tenerife28/tempfan.git)
-   cd tempfan
+   git clone https://github.com/Tenerife28/tempfan.git
+
